@@ -87,6 +87,11 @@ void loop() {
           fv = std::find(pos, frame.end(), 0x10);
           if (fv != frame.end()){
             int v;
+            int v_temp;
+            memcpy(&v_temp, &fv[1], 4);
+            if ((v_temp > 0) and (v_temp < 10000000)) {     //data filter
+              v = v_temp;
+            } 
             memcpy(&v, &fv[1], 4);
             ESP_LOGI("Info", "Meter state: %d L", v);
             if (MeterID == ApatorID_1) {
@@ -98,7 +103,7 @@ void loop() {
               Apator_id_2->publish_state(MeterID);
             }
           }
-        }
+        }   
     } else {
         ESP_LOGI("Info", "Incompatible ID\n");
     }
