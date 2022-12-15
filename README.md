@@ -1,0 +1,1 @@
+# ESPhome-APATOR-2meters-reader
