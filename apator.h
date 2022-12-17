@@ -93,7 +93,6 @@ void loop() {
             if ((v_temp > 0) and (v_temp < 10000000)) {     //data filter
               v = v_temp;
             } 
-            memcpy(&v, &fv[1], 4);
             ESP_LOGI("Info", "Meter state: %d L", v);
             if (MeterID == ApatorID_1) {
               Apator_state_1->publish_state(v);
