@@ -33,12 +33,21 @@ int ApatorID_1 = 0x1111111;    		//put your Id instead 1111111
 int ApatorID_2 = 0x2222222;       //put your Id instead 2222222	
 //**********************************************************************************************
 
+namespace MyTextData {
+      TextSensor *Apator_ID_1 = new TextSensor();
+      TextSensor *Apator_ID_2 = new TextSensor();
+    }
+    
+class MyTextSensor :public Component, public TextSensor {
+      public:
+        TextSensor *Apator_ID_1 = MyTextData::Apator_ID_1;
+        TextSensor *Apator_ID_2 = MyTextData::Apator_ID_2;
+    };
+  
 class MySensor :public Component, public Sensor {
   public: 
     Sensor *Apator_state_1 = new Sensor();
-    Sensor *Apator_id_1 = new Sensor();
     Sensor *Apator_state_2 = new Sensor();
-    Sensor *Apator_id_2 = new Sensor();
   protected: HighFrequencyLoopRequester high_freq_;
  
 
@@ -62,14 +71,18 @@ void loop() {
     sprintf(dll_id + 2, "%02X", frame[6]);
     sprintf(dll_id + 4, "%02X", frame[5]);
     sprintf(dll_id + 6, "%02X", frame[4]);
-    //int MeterID = atoi(dll_id);
+
     int MeterID = strtol(dll_id, NULL, 16);
+    char ID_text[32];
+    itoa(MeterID, ID_text, 16);
+       
+    ESP_LOGI("Info", "Package received");
+    ESP_LOGI("Info", "Meter ID (DEC) = %d", MeterID);
+    ESP_LOGI("Info", "Meter ID (HEX) = %X", MeterID);
+    ESP_LOGI("Info", "Signal strenght: %d", rssi);
     
-    ESP_LOGI("Info", "Package received. Meter ID = %s", dll_id);
-    ESP_LOGI("Info", "Signal strenght: %d dB", rssi);
     
-    
-    if (MeterID == ApatorID_1 || MeterID == ApatorID_2) {
+    if ((MeterID == ApatorID_1) || (MeterID == ApatorID_2)) {
          
         std::vector<uchar> key;
         key.assign(16,0);
@@ -87,20 +100,17 @@ void loop() {
           std::vector<uchar>::iterator fv;
           fv = std::find(pos, frame.end(), 0x10);
           if (fv != frame.end()){
-            int v;
             int v_temp;
             memcpy(&v_temp, &fv[1], 4);
-            if ((v_temp > 0) and (v_temp < 10000000)) {     //data filter
-              v = v_temp;
-            } 
-            ESP_LOGI("Info", "Meter state: %d L", v);
-            if (MeterID == ApatorID_1) {
-              Apator_state_1->publish_state(v);
-              Apator_id_1->publish_state(MeterID);
-            } 
-            if (MeterID == ApatorID_2) {
-              Apator_state_2->publish_state(v);
-              Apator_id_2->publish_state(MeterID);
+            if ((MeterID == ApatorID_1) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
+              ESP_LOGI("Info", "Meter state: %d L", v_temp);
+              Apator_state_1->publish_state(v_temp);
+              MyTextData::Apator_ID_1->publish_state(ID_text);
+            }
+            if ((MeterID == ApatorID_2) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
+              ESP_LOGI("Info", "Meter state: %d L", v_temp);
+              Apator_state_2->publish_state(v_temp);
+              MyTextData::Apator_ID_2->publish_state(ID_text);
             }
           }
         }   
