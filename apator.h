@@ -73,8 +73,8 @@ void loop() {
     sprintf(dll_id + 6, "%02X", frame[4]);
 
     int MeterID = strtol(dll_id, NULL, 16);
-    char ID_text[32];
-    itoa(MeterID, ID_text, 16);
+    //char ID_text[32];
+    //itoa(MeterID, ID_text, 16);
        
     ESP_LOGI("Info", "Package received");
     //ESP_LOGI("Info", "Meter ID (DEC) = %d", MeterID);
@@ -105,12 +105,12 @@ void loop() {
             if ((MeterID == ApatorID_1) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
               ESP_LOGI("Info", "Meter state: %d L", v_temp);
               Apator_state_1->publish_state(v_temp);
-              MyTextData::Apator_ID_1->publish_state(ID_text);
+              MyTextData::Apator_ID_1->publish_state(dll_id);
             }
             if ((MeterID == ApatorID_2) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
               ESP_LOGI("Info", "Meter state: %d L", v_temp);
               Apator_state_2->publish_state(v_temp);
-              MyTextData::Apator_ID_2->publish_state(ID_text);
+              MyTextData::Apator_ID_2->publish_state(dll_id);
             }
           }
         }   
