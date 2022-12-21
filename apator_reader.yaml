@@ -36,22 +36,30 @@ wifi:
 
 captive_portal:
 
+text_sensor:
+  - platform: custom
+    lambda: |-
+      auto textsensor = new MyTextSensor();
+      App.register_component(textsensor);
+      return {textsensor->Apator_ID_1, textsensor->Apator_ID_2};
+    text_sensors:
+      - name: Meter 1 ID                    #text 
+        filters:
+        - to_upper:
+      - name: Meter 2 ID                    #text 
+        filters:
+        - to_upper:
 
 sensor:
   - platform: custom
     lambda: |-
       auto sensor = new MySensor();
       App.register_component(sensor);
-      return {sensor->Apator_state_1, sensor->Apator_id_1, sensor->Apator_state_2, sensor->Apator_id_2};
+      return {sensor->Apator_state_1, sensor->Apator_state_2};
     sensors:
-      - name: Stan licznika wody Apator 1
+      - name: Water meter 1 state          #float value
         unit_of_measurement: L
         accuracy_decimals: 0
-      - name: Id licznika wody Apator 1
-        accuracy_decimals: 0
-      - name: Stan licznika wody Apator 2
+      - name: Water meter 2 state          #float value
         unit_of_measurement: L
         accuracy_decimals: 0
-      - name: Id licznika wody Apator 2
-        accuracy_decimals: 0
-
