@@ -82,7 +82,7 @@ void loop() {
     ESP_LOGI("Info", "Signal strenght: %d", rssi);
     
     
-    if ((MeterID == ApatorID_1) || (MeterID == ApatorID_2)) {
+    if (MeterID == ApatorID_1 || MeterID == ApatorID_2) {
          
         std::vector<uchar> key;
         key.assign(16,0);
@@ -102,12 +102,12 @@ void loop() {
           if (fv != frame.end()){
             int v_temp;
             memcpy(&v_temp, &fv[1], 4);
-            if ((MeterID == ApatorID_1) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
+            if (MeterID == ApatorID_1 and v_temp > 0 and v_temp < 10000000) {     //data filter
               ESP_LOGI("Info", "Meter state: %d L", v_temp);
               Apator_state_1->publish_state(v_temp);
               MyTextData::Apator_ID_1->publish_state(dll_id);
             }
-            if ((MeterID == ApatorID_2) and (v_temp > 0) and (v_temp < 10000000)) {     //data filter
+            if (MeterID == ApatorID_2 and v_temp > 0 and v_temp < 10000000) {     //data filter
               ESP_LOGI("Info", "Meter state: %d L", v_temp);
               Apator_state_2->publish_state(v_temp);
               MyTextData::Apator_ID_2->publish_state(dll_id);
